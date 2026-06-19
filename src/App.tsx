@@ -393,7 +393,7 @@ function App() {
                   Falta só <span className="text-white font-semibold">um passo</span>: entre agora no grupo do WhatsApp para receber o aviso das análises ao vivo e o material exclusivo.
                 </p>
                 <a
-                  href={REDIRECT_URL}
+                  href={buildTrackedRedirectUrl(REDIRECT_URL)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group w-full flex items-center justify-center gap-2 rounded-full p-1.5 bg-[#111827] border border-emerald-500/40 transition-all duration-300 hover:scale-[1.02] shadow-lg shadow-emerald-600/25 hover:border-emerald-400/70"
