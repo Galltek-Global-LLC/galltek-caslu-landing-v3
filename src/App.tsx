@@ -15,9 +15,12 @@ import {
   setupPageEngagementTracking,
 } from './lib/analytics';
 
-const REDIRECT_URL = 'https://wa.me/5511963508768?text=CASLU%2C%20QUERO%20ENTRAR';
 const META_PIXEL_ID = '1336546998650554';
 const FORM_NAME = 'caslu-captura-v3';
+
+interface AppProps {
+  redirectUrl: string;
+}
 
 const chips = [
   { icon: BookOpen, label: 'Conteúdos diários' },
@@ -38,7 +41,8 @@ const feedbackImages = [
   '/FEEDBACK20.PNG',
 ];
 
-function App() {
+function App({ redirectUrl }: AppProps) {
+  const REDIRECT_URL = redirectUrl;
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
