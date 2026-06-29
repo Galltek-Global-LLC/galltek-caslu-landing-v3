@@ -15,7 +15,7 @@ import {
   setupPageEngagementTracking,
 } from './lib/analytics';
 
-const REDIRECT_URL = 'https://ap.sparkletracker.com/re/op/6d045aeb-b631-49b6-a48f-2c987ff0e677?uid=1056';
+const REDIRECT_URL = 'https://wa.me/5511963508768?text=CASLU%2C%20QUERO%20ENTRAR';
 const META_PIXEL_ID = '1336546998650554';
 const FORM_NAME = 'caslu-captura-v3';
 
