@@ -4,15 +4,19 @@ interface Env {
   APPS_SCRIPT_URL?: string;
   META_PIXEL_ID?: string;
   META_ACCESS_TOKEN?: string;
+  CRM_WEBHOOK_URL?: string;
 }
 
 const FALLBACK_URL = 'https://script.google.com/macros/s/AKfycbyxQUW8uO_zLxphyCAwK7m4ew4aExanEKYU1ytqk5Ekah5i845b5KMRb6gEgKW9byXK/exec';
 const DEFAULT_PIXEL_ID = '1336546998650554';
+const DEFAULT_CRM_WEBHOOK_URL =
+  'https://api.datacrazy.io/v1/crm/api/crm/flows/webhooks/f705f5ce-7d95-44d8-bd41-28fd1d794bee/d492da27-63ff-4b78-9713-0bc1c17732f1';
 
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const targetUrl = env.APPS_SCRIPT_URL || FALLBACK_URL;
   const pixelId = env.META_PIXEL_ID || DEFAULT_PIXEL_ID;
   const accessToken = env.META_ACCESS_TOKEN;
+  const crmWebhookUrl = env.CRM_WEBHOOK_URL || DEFAULT_CRM_WEBHOOK_URL;
 
   let payload: Record<string, unknown>;
   try {
@@ -81,9 +85,45 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     }
   }
 
+  // 3. Envia para o CRM via webhook (fire-and-forget — não bloqueia o submit)
+  let crmResult: { sent: boolean; status?: number; error?: string } | undefined;
+  if (crmWebhookUrl) {
+    const crmPayload = {
+      nome: rest.nome,
+      email: rest.email,
+      telefone: whatsapp,
+      source: rest.source,
+      campaign: rest.campaign,
+      utm_source: rest.utm_source,
+      utm_medium: rest.utm_medium,
+      utm_campaign: rest.utm_campaign,
+      utm_content: rest.utm_content,
+      utm_term: rest.utm_term,
+      fbc,
+      fbp,
+      source_url,
+      timestamp: new Date().toISOString(),
+    };
+    try {
+      const crmResponse = await fetch(crmWebhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(crmPayload),
+      });
+      crmResult = { sent: crmResponse.ok, status: crmResponse.status };
+      if (!crmResponse.ok) {
+        console.warn('[CRM] Webhook retornou status', crmResponse.status);
+      }
+    } catch (err) {
+      crmResult = { sent: false, error: (err as Error).message };
+      console.warn('[CRM] Falha ao enviar para webhook:', crmResult.error);
+    }
+  }
+
   return Response.json({
     success: true,
     capi: capiResult ? { sent: capiResult.success } : { sent: false, reason: 'token-not-configured' },
+    crm: crmResult ? { sent: crmResult.sent, status: crmResult.status } : undefined,
   }, { status: 200 });
 };
 
