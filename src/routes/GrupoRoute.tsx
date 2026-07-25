@@ -5,7 +5,10 @@ import App from '../App';
 // Mantida no client como default para o caso da Function `/api/resolve-grupo-redirect`
 // nao responder a tempo ou retornar erro — assim o usuario cai direto no grupo
 // em vez de acabar na homepage do WhatsApp.
-const FALLBACK_GRUPO_URL = 'https://chat.whatsapp.com/CMWupazVQxs35Zya9ijYPw';
+// Params `src` e `via` marcam o link como fallback — permite identificar,
+// via analytics do CRM/Meta, quando o Sparkle esteve fora do ar.
+const FALLBACK_GRUPO_URL =
+  'https://chat.whatsapp.com/CMWupazVQxs35Zya9ijYPw?src=fallback-grupo&via=caslu-v3';
 
 const RESOLVE_ENDPOINT = '/api/resolve-grupo-redirect';
 const RESOLVE_TIMEOUT_MS = 2500;
