@@ -33,6 +33,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   let resolvedUrl = fallbackUrl;
   let healthy = false;
   let resolvedTo: string | undefined;
+  let mode: 'http-redirect' | 'js-redirect' | 'not-detected' = 'not-detected';
 
   try {
     // Segue redirects até obter o destino final (ou até 5 hops).
@@ -41,9 +42,21 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       redirect: 'follow',
     });
     resolvedTo = resp.url;
+
+    // Caso 1: redirect HTTP tradicional (302/301) — URL final já é o destino.
     if (EXPECTED_HOSTS.some((host) => (resolvedTo || '').includes(host))) {
       resolvedUrl = sparkleUrl;
       healthy = true;
+      mode = 'http-redirect';
+    } else if (resp.ok) {
+      // Caso 2: Sparkle retorna HTML e redireciona via JavaScript.
+      // Precisa inspecionar o corpo em busca do host esperado.
+      const html = await resp.text();
+      if (EXPECTED_HOSTS.some((host) => html.includes(host))) {
+        resolvedUrl = sparkleUrl;
+        healthy = true;
+        mode = 'js-redirect';
+      }
     }
   } catch (err) {
     console.warn('[resolve-grupo-redirect] fetch failed:', (err as Error).message);
@@ -53,6 +66,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     url: resolvedUrl,
     healthy,
     resolvedTo,
+    mode,
     source: healthy ? 'sparkle' : 'fallback',
   });
 
