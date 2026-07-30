@@ -5,7 +5,7 @@ interface Env {
   META_ACCESS_TOKEN?: string;
 }
 
-const DEFAULT_PIXEL_ID = '3542645589298894';
+const DEFAULT_PIXEL_ID = '1336546998650554';
 
 // Endpoint genérico pra enviar qualquer evento Meta via CAPI (server-side).
 // O frontend dispara Pixel client-side com mesmo eventID → Meta deduplica.
