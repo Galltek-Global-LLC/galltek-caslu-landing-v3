@@ -8,7 +8,7 @@ interface Env {
 }
 
 const FALLBACK_URL = 'https://script.google.com/macros/s/AKfycbyxQUW8uO_zLxphyCAwK7m4ew4aExanEKYU1ytqk5Ekah5i845b5KMRb6gEgKW9byXK/exec';
-const DEFAULT_PIXEL_ID = '1336546998650554';
+const DEFAULT_PIXEL_ID = '3542645589298894';
 const DEFAULT_CRM_WEBHOOK_URL =
   'https://api.datacrazy.io/v1/crm/api/crm/flows/webhooks/f705f5ce-7d95-44d8-bd41-28fd1d794bee/d492da27-63ff-4b78-9713-0bc1c17732f1';
 
